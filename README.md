@@ -1,6 +1,6 @@
 # 🎮 Unity Slot Machine Game — Assignment Submission
 
-A modular, performant, and extensible 3D/2D Slot Machine Game built with **Unity 2022/2023** and **C#**, featuring weighted Random Number Generation (RNG), smooth physics-based reel spinning with bounce easing, 5 active paylines, wild symbol substitutions, custom sound manager, and a WebGL build.
+A modular, performant, and extensible 3D/2D Slot Machine Game built with **Unity 2022/2023** and **C#**, featuring weighted Random Number Generation (RNG), smooth physics-based reel spinning with bounce easing, 5 active paylines, wild symbol substitutions, custom sound manager, NUnit unit test suite, and a WebGL build.
 
 ---
 
@@ -8,8 +8,9 @@ A modular, performant, and extensible 3D/2D Slot Machine Game built with **Unity
 1. [Game Overview](#-game-overview)
 2. [Playable WebGL Build & Instructions](#-playable-webgl-build--instructions)
 3. [Bonus Features](#-bonus-features)
-4. [Thought Process & Architectural Approach](#-thought-process--architectural-approach)
-5. [Project Folder Structure](#-project-folder-structure)
+4. [Automated Unit Testing & Build Pipeline](#-automated-unit-testing--build-pipeline)
+5. [Thought Process & Architectural Approach](#-thought-process--architectural-approach)
+6. [Project Folder Structure](#-project-folder-structure)
 
 ---
 
@@ -46,18 +47,33 @@ The **Unity Slot Machine Game** simulates an authentic casino 3x3 slot machine w
 - **🃏 Wild Symbol (`WILD`)**: Substitutes for any standard symbol (Cherry, Lemon, Seven, Diamond, etc.) to complete winning paylines.
 - **⚡ Auto Spin Mode**: Allows continuous spinning until toggled off or balance runs out.
 - **🏆 Win Celebration Modal**: Displays animated popups, credit score count-up animations, and highlighted paylines on Big Wins.
-- **🎯 Bounce Easing Animation**: Easing curves applied when reels stop.
+- **🔊 Custom Audio Manager**: Dedicated `SlotSoundManager.cs` handling spin loops, stop thuds, button clicks, and win fanfare SFX.
+- **🎯 Bounce Easing Animation**: Easing curves applied when reels stop via `ReelAnimationController.cs`.
+
+---
+
+## 🧪 Automated Unit Testing & Build Pipeline
+
+### 1. NUnit Unit Test Suite (`PaylineEvaluatorTests.cs`)
+Located under `Assets/Core/Scripts/Tests/`, evaluating core game logic:
+- `EvaluateGrid_ThreeMatchingSymbols_ReturnsWinningPayline`: Verifies 3x symbol payline detection & payout calculation.
+- `EvaluateGrid_WildSubstitution_ReturnsWinningPayline`: Tests Wild symbol substitution logic across paylines.
+
+### 2. Editor One-Click Build Pipeline (`BuildScript.cs`)
+Located under `Assets/Core/Editor/`, providing 1-click WebGL compilation via Unity menu (`SlotGame ➔ Build WebGL`) or CLI command:
+```bash
+Unity.exe -batchmode -quit -projectPath . -executeMethod SlotGame.Editor.BuildScript.BuildWebGL
+```
 
 ---
 
 ## 🧠 Thought Process & Architectural Approach
 
-### 1. Object-Oriented & Decoupled Design (SOLID Principles)
-To ensure clean code maintainability and scalability, the architecture separates data, physics, evaluation logic, and user interface into distinct components:
-- **Data Layer (`SymbolData.cs`)**: Utilizes Unity **ScriptableObjects** under `Assets/Core/Scripts/Data/` to define symbol properties without hardcoding values in scripts.
-- **Physics Layer (`ReelController.cs`)**: Manages individual reel scrolling, symbol wrap-around looping, and bounce easing curves upon stopping under `Assets/Core/Scripts/Controllers/`.
-- **Evaluation Layer (`PaylineEvaluator.cs`)**: Decoupled matrix evaluation engine that checks 3x3 symbol combinations against paylines and calculates total payouts.
-- **State Machine (`SlotMachineController.cs`)**: Manages state transitions using `SlotState.cs` under `Assets/Core/Scripts/Enums/`.
+### Object-Oriented & Decoupled Design (SOLID Principles)
+- **Data Layer (`SymbolData.cs`)**: ScriptableObjects defining symbol metadata.
+- **Physics Layer (`ReelController.cs`)**: Coroutine-driven physics reel spinning & bounce snap animation.
+- **Testing Layer (`PaylineEvaluatorTests.cs`)**: NUnit automated testing.
+- **State Machine (`SlotMachineController.cs`)**: Finite State Machine handling spin lifecycle safely.
 
 ---
 
@@ -75,16 +91,16 @@ Assets/
 │   │   │   ├── PaylineEvaluator.cs
 │   │   │   ├── BetManager.cs
 │   │   │   └── UIManager.cs
-│   │   └── Enums/
-│   │       └── SlotState.cs
+│   │   ├── Enums/
+│   │   │   └── SlotState.cs
+│   │   └── Tests/
+│   │       └── PaylineEvaluatorTests.cs
+│   ├── Editor/
+│   │   └── BuildScript.cs
 │   ├── Prefabs/
-│   │   ├── Reel.prefab
-│   │   └── SymbolItem.prefab
 │   ├── ScriptableObjects/
-│   │   ├── Cherry.asset
-│   │   ├── Lemon.asset
-│   │   ├── Seven.asset
-│   │   └── Wild.asset
 │   └── Sprites/
-└── WebGLTemplates/
+├── WebGLTemplates/
+├── .gitignore
+└── README.md
 ```
