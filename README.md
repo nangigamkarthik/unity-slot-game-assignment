@@ -28,8 +28,7 @@ The **Unity Slot Machine Game** simulates an authentic casino 3x3 slot machine w
 
 ## 🌐 Playable WebGL Build & Instructions
 
-### 🔗 Live WebGL Demo Link
-👉 **[Click Here to Play the Live WebGL Build](https://pawpulse-deploy.vercel.app/slot_game.html)**
+
 
 ### ⚙️ How to Run the WebGL Build Locally:
 1. Locate the `/Build/WebGL` folder inside this repository.
